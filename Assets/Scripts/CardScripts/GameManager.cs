@@ -57,12 +57,14 @@ public class GameManager : MonoBehaviour
             cards.Clear();
         }
 
-        List<string> _tempCardId = cardIDs;
+        List<string> _tempCardId = new List<string>(cardIDs);
 
         for (int i = cardIDs.Count - 1; i >= 0; i--)
         {
             _tempCardId.Add(cardIDs[i]);
         }
+
+        UIManager.SetTotalMatches(_tempCardId.Count / 2);
 
         int ri = Random.Range(0, _tempCardId.Count);
 
@@ -70,8 +72,9 @@ public class GameManager : MonoBehaviour
         while (_tempCardId.Count > 0)
         {
             GameObject newCard = Instantiate(cardPrefab, cardParent);
-            newCard.GetComponent<CardController>().SetCardID(_tempCardId[ri]);
-            cards.Add(newCard.GetComponent<CardController>());
+            CardController cardController = newCard.GetComponent<CardController>();
+            cardController.SetCardID(_tempCardId[ri]);
+            cards.Add(cardController);
             _tempCardId.RemoveAt(ri);
             ri = Random.Range(0, _tempCardId.Count);
         }
@@ -113,16 +116,6 @@ public class GameManager : MonoBehaviour
                 UIManager.UpdateMatches();
             }
         }
-
-        foreach (CardController item in instance.cards)
-        {
-            if (item.canFlip)
-            {
-                return;
-            }
-        }
-
-        Debug.Log("All cards matched!");
     }
 
     public void QuitGame()
