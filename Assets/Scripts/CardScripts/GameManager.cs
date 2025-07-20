@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
@@ -23,6 +24,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     CardController cardSelected2 = null;
 
+    public static UnityEvent OnGameStart = null;
+
     private void Awake()
     {
         if (instance == null)
@@ -34,15 +37,17 @@ public class GameManager : MonoBehaviour
             Destroy(this);
         }
 
-        SetupGame();
+        SetupNewGame();
     }
 
     private void Start()
     {
     }
 
-    public void SetupGame()
+    public void SetupNewGame()
     {
+        OnGameStart?.Invoke();
+
         if (cards.Count > 0)
         {
             foreach (CardController card in cards)
@@ -92,6 +97,8 @@ public class GameManager : MonoBehaviour
 
                 instance.cardSelected1 = null;
                 instance.cardSelected2 = null;
+
+                SoundManager.PlaySound(SoundType.CardMismatch);
             }
             else
             {
@@ -100,6 +107,7 @@ public class GameManager : MonoBehaviour
 
                 instance.cardSelected1 = null;
                 instance.cardSelected2 = null;
+                SoundManager.PlaySound(SoundType.CardMatch);
             }
         }
 

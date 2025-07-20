@@ -70,6 +70,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler
            new Vector3(0, isFlipped ? 180 : 0, 0),
           0.5f
        ).SetEase(Ease.OutBack);
+
+        SoundManager.PlaySound(SoundType.CardFlip);
     }
 
     public void CardSetup()
