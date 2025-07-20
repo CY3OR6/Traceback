@@ -68,7 +68,6 @@ public class GameManager : MonoBehaviour
 
         int ri = Random.Range(0, _tempCardId.Count);
 
-
         while (_tempCardId.Count > 0)
         {
             GameObject newCard = Instantiate(cardPrefab, cardParent);
@@ -78,6 +77,9 @@ public class GameManager : MonoBehaviour
             _tempCardId.RemoveAt(ri);
             ri = Random.Range(0, _tempCardId.Count);
         }
+
+        PlayerPrefs.SetInt("NumberOfCards", cards.Count);
+        SaveCards();
     }
 
     public static void SelectCard(CardController card)
@@ -109,6 +111,9 @@ public class GameManager : MonoBehaviour
                 instance.cardSelected1.CardMatched();
                 instance.cardSelected2.CardMatched();
 
+                instance.SaveCard(instance.cardSelected1);
+                instance.SaveCard(instance.cardSelected2);
+
                 instance.cardSelected1 = null;
                 instance.cardSelected2 = null;
                 SoundManager.PlaySound(SoundType.CardMatch);
@@ -124,5 +129,66 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
+
+    public void SaveCards()
+    {
+        string saveName = "CardSave";
+
+        for (int i = 0; i < cards.Count; i++)
+        {
+            PlayerPrefs.SetString(saveName + i, cards[i].GetCardID());
+            PlayerPrefs.SetInt(i.ToString(), 0);
+        }
+
+    }
+
+    public void SaveCard(CardController _cc)
+    {
+        int saveName = cards.IndexOf(_cc);
+
+        PlayerPrefs.SetInt(saveName.ToString(), 1);
+    }
+
+    public void LoadCards()
+    {
+        OnGameStart?.Invoke();
+
+        cards.Clear();
+
+        string saveName = "CardSave";
+        for (int i = 0; i < PlayerPrefs.GetInt("NumberOfCards"); i++)
+        {
+            GameObject newCard = Instantiate(cardPrefab, cardParent);
+            CardController cardController = newCard.GetComponent<CardController>();
+            cardController.SetCardID(PlayerPrefs.GetString(saveName + i));
+            cards.Add(cardController);
+
+            if (PlayerPrefs.GetInt(i.ToString()) == 1)
+            {
+                cardController.CardMatched();
+            }
+        }
+
+        UIManager.SetTotalMatches(cards.Count / 2);
+
+        int matchedPairs = 0;
+        for (int i = 0; i < PlayerPrefs.GetInt("NumberOfCards"); i++)
+        {
+            if (PlayerPrefs.GetInt(i.ToString()) == 1)
+            {
+                matchedPairs++;
+            }
+        }
+
+        UIManager.SetMatches(matchedPairs / 2);
+
+    }
+
+    public static void ClearSave()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.SetInt("NumberOfCards", 0);
+        instance.cards.Clear();
+    }
 
 }

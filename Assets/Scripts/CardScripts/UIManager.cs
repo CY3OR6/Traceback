@@ -8,6 +8,9 @@ public class UIManager : MonoBehaviour
     public static UIManager instance { get; private set; }
 
     [SerializeField]
+    GameObject continueButton = null;
+
+    [SerializeField]
     GameObject menuPanel = null;
     [SerializeField]
     GameObject gridPanel = null;
@@ -61,6 +64,16 @@ public class UIManager : MonoBehaviour
         gridPanel?.SetActive(false);
         scorePanel?.SetActive(false);
         gameOverPanel?.SetActive(false);
+
+
+        if (PlayerPrefs.GetInt("NumberOfCards") > 0)
+        {
+            continueButton.SetActive(true);
+        }
+        else
+        {
+            continueButton.SetActive(false);
+        }
 
     }
 
@@ -126,9 +139,17 @@ public class UIManager : MonoBehaviour
         instance.totalMatchesText.text = "/ " + totalMatches.ToString();
     }
 
+    public static void SetMatches(int matches)
+    {
+        instance.matches = matches;
+        instance.matchesText.text = matches.ToString();
+    }
+
     IEnumerator OnGameOver()
     {
         yield return new WaitForSeconds(1f);
+
+        GameManager.ClearSave();
 
         gameOverPanel.SetActive(true);
         gridPanel.SetActive(false);
