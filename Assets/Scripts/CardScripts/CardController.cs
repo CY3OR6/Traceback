@@ -50,6 +50,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler
         }
         FlipCard();
         GameManager.SelectCard(this);
+        SoundManager.PlaySound(SoundType.CardFlip);
+        UIManager.UpdateTurns();
     }
 
 
@@ -71,7 +73,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler
           0.5f
        ).SetEase(Ease.OutBack);
 
-        SoundManager.PlaySound(SoundType.CardFlip);
+
     }
 
     public void CardSetup()

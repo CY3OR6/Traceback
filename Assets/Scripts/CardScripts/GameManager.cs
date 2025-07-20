@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     CardController cardSelected2 = null;
 
-    public static UnityEvent OnGameStart = null;
+    public UnityEvent OnGameStart = null;
 
     private void Awake()
     {
@@ -37,11 +37,11 @@ public class GameManager : MonoBehaviour
             Destroy(this);
         }
 
-        SetupNewGame();
     }
 
     private void Start()
     {
+
     }
 
     public void SetupNewGame()
@@ -99,6 +99,7 @@ public class GameManager : MonoBehaviour
                 instance.cardSelected2 = null;
 
                 SoundManager.PlaySound(SoundType.CardMismatch);
+                UIManager.ResetCombo();
             }
             else
             {
@@ -108,6 +109,8 @@ public class GameManager : MonoBehaviour
                 instance.cardSelected1 = null;
                 instance.cardSelected2 = null;
                 SoundManager.PlaySound(SoundType.CardMatch);
+                UIManager.UpdateScore();
+                UIManager.UpdateMatches();
             }
         }
 
@@ -121,5 +124,12 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("All cards matched!");
     }
+
+    public void QuitGame()
+    {
+        cards.Clear();
+        Application.Quit();
+    }
+
 
 }
