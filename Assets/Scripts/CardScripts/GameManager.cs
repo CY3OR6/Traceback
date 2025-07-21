@@ -182,12 +182,22 @@ public class GameManager : MonoBehaviour
 
         UIManager.SetMatches(matchedPairs / 2);
 
+        UIManager.SetScore(PlayerPrefs.GetInt(UIManager.ScoreSaveName), PlayerPrefs.GetInt(UIManager.ComboSaveName));
+
+        UIManager.SetTurns(PlayerPrefs.GetInt(UIManager.TurnsSaveName));
+
     }
 
     public static void ClearSave()
     {
         PlayerPrefs.DeleteAll();
         PlayerPrefs.SetInt("NumberOfCards", 0);
+
+        foreach (CardController card in instance.cards)
+        {
+            Destroy(card.gameObject);
+        }
+
         instance.cards.Clear();
     }
 

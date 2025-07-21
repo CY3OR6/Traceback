@@ -49,6 +49,13 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     TMP_Text matchesGOText = null;
 
+    //Save names for stats
+
+    public const string ScoreSaveName = "SavedScore";
+    public const string ComboSaveName = "SavedCombo";
+    public const string TurnsSaveName = "SavedTurns";
+
+
     private void Awake()
     {
         if (instance == null)
@@ -106,18 +113,39 @@ public class UIManager : MonoBehaviour
         instance.score += (instance.scoreToAdd * instance.combo);
         instance.scoreText.text = instance.score.ToString();
         instance.comboText.text = instance.combo.ToString();
+
+        PlayerPrefs.SetInt(ScoreSaveName, instance.score);
+        PlayerPrefs.SetInt(ComboSaveName, instance.combo);
+
+    }
+
+    public static void SetScore(int score, int combo)
+    {
+        instance.score = score;
+        instance.scoreText.text = score.ToString();
+
+        instance.combo = combo;
+        instance.comboText.text = combo.ToString();
     }
 
     public static void ResetCombo()
     {
         instance.combo = 0;
         instance.comboText.text = instance.combo.ToString();
+        PlayerPrefs.SetInt(ComboSaveName, instance.combo);
     }
 
     public static void UpdateTurns()
     {
         instance.turns++;
         instance.turnsText.text = instance.turns.ToString();
+        PlayerPrefs.SetInt(TurnsSaveName, instance.turns);
+    }
+
+    public static void SetTurns(int turns)
+    {
+        instance.turns = turns;
+        instance.turnsText.text = turns.ToString();
     }
 
     public static void UpdateMatches()
@@ -133,17 +161,18 @@ public class UIManager : MonoBehaviour
 
     }
 
-    public static void SetTotalMatches(int totalMatches)
-    {
-        instance.totalMatches = totalMatches;
-        instance.totalMatchesText.text = "/ " + totalMatches.ToString();
-    }
-
     public static void SetMatches(int matches)
     {
         instance.matches = matches;
         instance.matchesText.text = matches.ToString();
     }
+
+    public static void SetTotalMatches(int totalMatches)
+    {
+        instance.totalMatches = totalMatches;
+        instance.totalMatchesText.text = $"/ {totalMatches}";
+    }
+
 
     IEnumerator OnGameOver()
     {
@@ -154,10 +183,10 @@ public class UIManager : MonoBehaviour
         gameOverPanel.SetActive(true);
         gridPanel.SetActive(false);
         scorePanel.SetActive(false);
-        scoreGOText.text = "Score: " + score.ToString();
-        comboGOText.text = "Combo: " + combo.ToString();
-        turnsGOText.text = "Turns: " + turns.ToString();
-        matchesGOText.text = "Matches: " + matches.ToString() + "/ " + totalMatches.ToString();
+        scoreGOText.text = $"Score: {score}";
+        comboGOText.text = $"Combo: {combo}";
+        turnsGOText.text = $"Turns: {turns}";
+        matchesGOText.text = $"Matches: {matches} / {totalMatches}";
     }
 
 }
